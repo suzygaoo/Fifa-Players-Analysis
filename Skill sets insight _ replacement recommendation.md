@@ -1,8 +1,8 @@
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-#Skill insight 
-##Load Data
+# Skill insight 
+## Load Data
 ```{r}
 setwd("D:/×ÊÁÏ/Columbia/Coursework/Framework 2/Assignment/Own Project/FiFA")
 # load three Cluster Data
@@ -17,7 +17,7 @@ fifa2 = read.csv('2 cluster/fifa_cluster2_total.csv')
 fifa = read.csv('fifa_total.csv')
 ```
 
-##Data Preparation
+## Data Preparation
 Select relevant variables to do prediction
 ```{r}
 #Choose related variables
@@ -29,7 +29,7 @@ fifa2_2_model <-fifa2_2[,-which(names(fifa2_2)%in%c('ID','Name','Overall','Value
 fifa3model <- fifa3[,-which(names(fifa3)%in%c('ID','Name','Overall','Value','Wage','Real.Face','Jersey.Number','Joined','Contract.Valid.Until','cluster','Position','Release.Clause','International.Reputation'))]
 fifa2model <- fifa2[,-which(names(fifa2)%in%c('ID','Name','Overall','Value','Wage','Real.Face','Jersey.Number','Joined','Contract.Valid.Until','cluster','Position','Release.Clause','International.Reputation'))]
 ```
-Dummy the PositionGroup variables
+### Dummy the PositionGroup variables
 ```{r}
 library(psych)
 dummy_position3 <-dummy.code(fifa3$PositionGroup)
@@ -40,7 +40,8 @@ dummy_position3_3 <-dummy.code(fifa3_3_model$PositionGroup)
 dummy_position2_1 <-dummy.code(fifa2_1_model$PositionGroup)
 dummy_position2_2 <-dummy.code(fifa2_2_model$PositionGroup)
 ```
-combine the dummy variables with the original data set
+
+### combine the dummy variables with the original data set
 ```{r}
 fifa3_1_model <-cbind(dummy_position3_1,fifa3_1_model)
 fifa3_2_model <-cbind(dummy_position3_2,fifa3_2_model)
@@ -51,7 +52,7 @@ fifa3 <-cbind(dummy_position3,fifa3)
 fifa2 <-cbind(dummy_position2,fifa2)
 ```
 
-factor those dummy variables
+### factor those dummy variables
 ```{r}
 factorcolumn <- function(x){
   x[,which(names(x)%in%c('DEF','FWD','MID','GK'))] <- lapply(x[,which(names(x)%in%c('DEF','FWD','MID','GK'))],as.factor)
@@ -66,7 +67,7 @@ fifa2 <- factorcolumn(fifa2)
 fifa3 <- factorcolumn(fifa3)
 ```
 
-train-test split
+### train-test split
 ```{r}
 #Train-test split use the largest data set as example
 # Three clusters dataset 1
@@ -102,14 +103,14 @@ split2 = sample(1:nrow(fifa2_2_model), nrow(fifa2_2_model)*0.75)
 fifa2_2_model_train = fifa2_2_model[split3,]
 fifa3_2_model_test = fifa3_2_model[-split3,]
 
-#Total
+# Total
 set.seed(200)
 split2 = sample(1:nrow(fifa2model), nrow(fifa2model)*0.75)
 fifa2_model_train = fifa2model[split3,]
 fifa2_model_test = fifa2model[-split3,]
 ```
 
-##Build Random Forest model
+### Build Random Forest model
 ```{r}
 library(ranger)
 #build model
@@ -133,19 +134,19 @@ sum(predForest3$prediction ==fifa3_model_test$PositionGroup)/nrow(fifa3_model_te
 sum(predForest2$prediction ==fifa2_model_test$PositionGroup)/nrow(fifa2_model_test)
 ```
 
-## To unlock which skill sets are important when predicting Position DEF
+### To unlock which skill sets are important when predicting Position DEF
 ```{r}
 set.seed(100)
 rg.forest3<- ranger(PositionGroup~.-DEF-FWD-MID,data=fifa3_model_train, importance = "impurity")
 head(sort(rg.forest3$variable.importance,decreasing = TRUE),10)
 ```
 
-##Draw importance purity plot
+### Draw importance purity plot
 ```{r}
 barplot(head(sort(rg.forest3$variable.importance,decreasing = TRUE),10),cex.names = 0.5)
 ```
 
-## Draw box plot about position and skill set
+### Draw box plot about position and skill set
 SlidingTackle
 ```{r}
 library(dplyr)
@@ -158,7 +159,7 @@ fifa2_1 %>%
 
 ```
 
-StandingTackle
+### StandingTackle
 ```{r}
 library(ggplot2)
 fifa3_1 %>%
@@ -168,7 +169,7 @@ fifa3_1 %>%
   ggtitle("StandingTackle and Position", subtitle = "") 
 ```
 
-Finishing
+### Finishing
 ```{r}
 fifa2_1 %>%
   filter(PositionGroup != "Unknown") %>%
@@ -177,7 +178,7 @@ fifa2_1 %>%
   ggtitle("Finishing skill and Position", subtitle = "") 
 ```
 
-Vision
+### Vision
 ```{r}
 fifa3_1 %>%
   filter(PositionGroup != "Unknown") %>%
@@ -186,7 +187,7 @@ fifa3_1 %>%
   ggtitle("Vision and Position", subtitle = "") 
 ```
 
-Interceptions
+### Interceptions
 ```{r}
 fifa3_1 %>%
   filter(PositionGroup != "Unknown") %>%
@@ -195,7 +196,7 @@ fifa3_1 %>%
   ggtitle("Interceptions and Position", subtitle = "") 
 ```
 
-HeadingAccuracy
+### HeadingAccuracy
 ```{r}
 fifa3_1 %>%
   filter(PositionGroup != "Unknown") %>%
@@ -205,14 +206,14 @@ fifa3_1 %>%
 ```
 
 
-#Replacement Recommendation
+### Replacement Recommendation
 ```{r}
 FWD_play <- fifa2[fifa2$FWD == 1,]
 DEF_play <- fifa2[fifa2$DEF == 1,]
 MID_play <- fifa2[fifa2$MID== 1,]
 ```
 
-##Build replacment function
+### Build replacment function
 Utilize random forest results to build core-skill list 
 ```{r}
 MID_skillset = c('HeadingAccuracy','Vision','LongPassing','SlidingTackle','Finishing','Crossing','RB','LB','ShortPassing','SprintSpeed')
@@ -221,19 +222,19 @@ DEF_skillset = c('SlidingTackle','Finishing','StandingTackle','Vision','RCB','In
 distinctive_skill = c('SlidingTackle','Finishing','RB','LB')
 ```
 
-put name and ID back to data set
+### put name and ID back to data set
 ```{r}
 fifa2 = cbind(fifa[,c('ID','Name')],fifa2)
 ```
 
-divide the data set by players' position
+### divide the data set by players' position
 ```{r}
 FWD_play <- fifa2[fifa2$FWD == 1,]
 DEF_play <- fifa2[fifa2$DEF == 1,]
 MID_play <- fifa2[fifa2$MID== 1,]
 ```
 
-##Build function
+### Build function
 In this fucntion, you can input your targeted player and your budget, and we will find the best player for your team.
 ```{r}
 findsimilarplayer <- function(x,y){
@@ -290,11 +291,11 @@ print(head(result))
 ```
 
 
-Here is the example. We need a player who plays like Messi(ID:158023), but we only have 57000 dollars,which is far lower than Messi's value- 110500 dollars. Who should we buy for our team?
+### Here is the example. We need a player who plays like Messi(ID:158023), but we only have 57000 dollars,which is far lower than Messi's value- 110500 dollars. Who should we buy for our team?
 ```{r}
 findsimilarplayer(158023,57000)
 ```
-It seems like M.Depay is our Guy!
+## It seems like M.Depay is our Guy!
 
 
 
