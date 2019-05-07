@@ -1,10 +1,3 @@
----
-title: "fifa"
-author: "Zhijun LIu"
-date: "2019/3/5"
-output:
-  html_document: default
----
 ## Read data
 ```{r}
 fifa = read.csv('data.csv',stringsAsFactors = F)
