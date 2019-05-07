@@ -1,22 +1,11 @@
----
-title: "Fifa player EDA and Visualization"
-author: "Suzy Gao"
-date: "4/22/2019"
-output: html_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-###1. Prepare data
-####read data in
+### 1. Prepare data
+#### read data in
 ```{r}
 fifa_cleaned <- read.csv("~/Desktop/SPRING 19/R/final project/fifa_cleaned.csv")
 ```
 
 
-####loading packages
+#### loading packages
 ```{r results='hide', message=FALSE, warning=FALSE}
 library(ggplot2)
 library(tidyverse)
@@ -29,7 +18,7 @@ library(ggrepel)
 library(ellipsis)
 ```
 
-####Let's take a look at some famous players and their values
+#### Let's take a look at some famous players and their values
 ```{r}
 fifa_cleaned$Value = as.numeric(fifa_cleaned$Value)
 fifa_cleaned$Value[fifa_cleaned$Name == "Neymar Jr"]
@@ -41,9 +30,9 @@ summary(fifa_cleaned$Value)
 
 
 
-###2. Exploring top players
+### 2. Exploring top players
 
-#####Finding top 10 players and their clubs whose value is highest
+##### Finding top 10 players and their clubs whose value is highest
 
 ```{r fig.width = 10, fig.height=5}
 fifa_cleaned %>%
@@ -59,9 +48,9 @@ fifa_cleaned %>%
 
 
 
-###Let's look at some Superstars in FIFA 
+### Let's look at some Superstars in FIFA 
 
-#####we consider playerw with overall rating over 85 as a superstart
+##### we consider playerw with overall rating over 85 as a superstart
 ```{r echo=FALSE}
 fifa_cleaned %>%
   mutate(Superstar = ifelse(Overall> 86, "Superstar","Non - Superstar"))%>%
@@ -79,9 +68,9 @@ fifa_cleaned %>%
 ```
 
 
-###3. Exploring the overall ratings
+### 3. Exploring the overall ratings
 
-#####Plotting the distribution of overall ratings
+##### Plotting the distribution of overall ratings
 ```{r}
 fifa_cleaned %>%
   ggplot(aes(x= Overall)) +
@@ -93,9 +82,9 @@ fifa_cleaned %>%
 ```
 
 
-###Age vs Overall Rating
+### Age vs Overall Rating
 
-#####frist need to group different positions
+##### frist need to group different positions
 ```{r}
 positions <- unique(fifa_cleaned$Position)
 
@@ -132,7 +121,7 @@ fifa_cleaned %>%
 
 
 
-###Age vs Overall rating by positions
+### Age vs Overall rating by positions
 
 ```{r}
 fifa_cleaned %>%
@@ -148,7 +137,7 @@ fifa_cleaned %>%
 <br />By looking at the above plot, we notice that the decline for defenders’ ratings starts earliest at around 33 years of age, and the decline for both attackers and midfielders starts around 35 years of age.
 
 
-###Is player jersey number related to Overall ratings?
+### Is player jersey number related to Overall ratings?
 ```{r echo=FALSE, warning=FALSE}
 fifa_cleaned %>%
   group_by(Jersey.Number) %>%
@@ -164,9 +153,9 @@ fifa_cleaned %>%
 
 
 
-###4. Exploring the players values
+### 4. Exploring the players values
 
-####Plotting players values and we can look at the outliers from the plot
+#### Plotting players values and we can look at the outliers from the plot
 ```{r}
 p <- fifa_cleaned %>%
   ggplot(aes(x= Value)) +
@@ -188,8 +177,8 @@ p +
 
 
 
-###Plotting players age vs players values
-#####First need to group players by age
+### Plotting players age vs players values
+##### First need to group players by age
 ```{r}
 fifa_cleaned <- fifa_cleaned %>%
   mutate(AgeGroup = ifelse(Age <= 20, "20 and under", ifelse(Age > 20 & Age <=25, "21 to 25", ifelse(Age > 25 & Age <= 30, "25 to 30", ifelse(Age > 30 & Age <= 35, "31 to 35", "Over 35")))))
@@ -208,7 +197,7 @@ fifa_cleaned %>%
 
 
 
-###Plotting players positions vs players values
+### Plotting players positions vs players values
 
 ```{r,fig.width = 8, fig.height=8}
 a <- fifa_cleaned %>%
@@ -240,7 +229,7 @@ gridExtra::grid.arrange(a, b)
 
 
 
-###5. Exploring the relationship between Ratings and Value
+### 5. Exploring the relationship between Ratings and Value
 
 #### Comparing Overall ratings with Value of players
 ```{r}
@@ -249,12 +238,12 @@ ggplot(fifa_cleaned,aes(x=Overall,y=Value)) + geom_point(alpha=0.3) +
 ```  
 
 
-###6. Exploring player attributes
+### 6. Exploring player attributes
 
   
-####Now let's compare the percentage of different attributes between two players
+#### Now let's compare the percentage of different attributes between two players
 
-#####first we need to group similar attributes
+##### first we need to group similar attributes
 ```{r}
 fifa_enhanced  <- fifa_cleaned %>% mutate(totscore = Crossing + Finishing + HeadingAccuracy + ShortPassing + Volleys + Dribbling + Curve + FKAccuracy + LongPassing + BallControl + Acceleration + SprintSpeed + Agility + Reactions + Balance + ShotPower + Jumping + Stamina + Strength + LongShots + Aggression + Interceptions + Positioning + Vision + Penalties + Composure + Marking + StandingTackle + SlidingTackle) %>%
                                 mutate(percross = Crossing / totscore, perfin = Finishing / totscore, perHeading = HeadingAccuracy/totscore, perSP  = ShortPassing/totscore, pervol = Volleys/totscore, perdrib = Dribbling/totscore, perCur = Curve/totscore, perFKA = FKAccuracy/totscore, perLP = LongPassing/totscore, perBallCont = BallControl / totscore, perAcc = Acceleration / totscore, perSprSpe = SprintSpeed / totscore, perAg = Agility / totscore, perRec = Reactions/totscore, perbal = Balance/totscore, perShotP = ShotPower/totscore, perJump = Jumping/totscore, perstam = Stamina/totscore, perStren = Strength/totscore, perLS = LongShots / totscore, perAgr = Aggression/totscore, perInts = Interceptions/totscore, perPos = Positioning/totscore, perVis = Vision/totscore, perPen = Penalties /totscore, perCom = Composure/totscore, perMark = Marking/totscore, perStandT = StandingTackle/totscore, perSlideT = SlidingTackle/totscore)
@@ -313,8 +302,8 @@ ggplot(selectedplay2, aes(x = attribute, y = value, fill = Name)) +
 ```
 
 
-###Positions VS Attributes
-#####Analyzing the median ratings for each of the attributes for \neach position for players with and overall rating over 75
+### Positions VS Attributes
+##### Analyzing the median ratings for each of the attributes for \neach position for players with and overall rating over 75
 ```{r,fig.width = 12, fig.height=10}
 tile_data <- fifa_cleaned %>%
   select_if(is.numeric) %>%
