@@ -1,15 +1,10 @@
----
-title: "Skill set insight and replacement recommendation"
-output: html_document
----
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 #Skill insight 
 ##Load Data
 ```{r}
-setwd("D:/◊ ¡œ/Columbia/Coursework/Framework 2/Assignment/Own Project/FiFA")
+setwd("D:/√ó√ä√Å√è/Columbia/Coursework/Framework 2/Assignment/Own Project/FiFA")
 # load three Cluster Data
 fifa3_1 = read.csv('3 cluster/fifa_1_Groupcluster.csv')
 fifa3_2 = read.csv('3 cluster/fifa_2_Groupcluster.csv')
