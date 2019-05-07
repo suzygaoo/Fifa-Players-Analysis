@@ -1,9 +1,3 @@
----
-title: "k-means"
-author: "Zhijun LIu"
-date: "2019/4/20"
-output: html_document
----
 ```{r}
 fifa_cluster = read.csv("fifa.csv")
 ```
